@@ -80,7 +80,7 @@ func Fprint(anyColor func(interface{}) string, deep int, args ...interface{}) {
 		fmt.Println(strings.Join(msgs, " "))
 		return
 	}
-	if funcName == "0" {
+	if funcName == "" || funcName == "0" || funcName == "1" {
 		funcName = "init"
 	}
 
@@ -89,8 +89,13 @@ func Fprint(anyColor func(interface{}) string, deep int, args ...interface{}) {
 		msgs = append(msgs, CC.Red(strings.Join([]string{funcName, err.Error()}, " ")))
 		fmt.Println(msgs)
 	} else {
-		// dir = dir + string(os.PathSeparator)
-		file = strings.ReplaceAll(file, dir, "")
+		basename := filepath.Base(dir)
+		pths := strings.SplitN(file, basename, 2)
+		if len(pths) > 2 {
+			file = pths[len(pths)-2] + basename + pths[len(pths)-1]
+		} else {
+			file = pths[len(pths)-1]
+		}
 		// msgs = append(msgs, fmt.Sprintf("\033[36m%11s:%-4d\033[0m \033[33m%-9s\033[0m", file, line, funcName))
 		pathline := fmt.Sprintf("%s:%s", CC.Cyan(file), CC.Blue(line))
 		msgs = append(msgs, fmt.Sprintf("%-35s", pathline)+" "+CC.Yellow(funcName))
@@ -117,4 +122,11 @@ func (_l *Logger) Info(args ...interface{}) {
 
 func (_l *Logger) High(args ...interface{}) {
 	Fprint(CC.Yellow, 2, args)
+}
+
+func init() {
+	// fmt.Println("logger init")
+	l := Logger{}
+	l.Info("logger init")
+	l.Error("logger init")
 }

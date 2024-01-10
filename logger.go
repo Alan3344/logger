@@ -123,10 +123,3 @@ func (_l *Logger) Info(args ...interface{}) {
 func (_l *Logger) High(args ...interface{}) {
 	Fprint(CC.Yellow, 2, args)
 }
-
-func init() {
-	// fmt.Println("logger init")
-	l := Logger{}
-	l.Info("logger init")
-	l.Error("logger init")
-}
